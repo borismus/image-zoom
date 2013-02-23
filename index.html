@@ -1,0 +1,104 @@
+<style>
+body {
+  padding: 0;
+  margin: 0;
+}
+#left {
+  width: 50%;
+  float: left;
+}
+#right {
+  width: 50%;
+  float: left;
+}
+
+#container { clear: both; width: 960px; margin: 0 auto; padding-top: 1em; }
+.info { font-size: 1.5em; margin-top: 1em; }
+
+#left-controls { float: left; }
+#right-controls { float: right; }
+
+#base-image { clear: both; text-align: center; }
+#base-image select { font-size: 4em; }
+
+canvas {
+  cursor: -webkit-zoom-in;
+}
+</style>
+
+<!--<img id="left" src="plane/hq1x.jpg"/>
+<img id="right" src="plane/ulq2x.jpg"/>-->
+
+<canvas id="left"></canvas>
+<canvas id="right"></canvas>
+
+<div id="container">
+
+  <div id="base-image">
+    <select>
+      <option>plane</option>
+      <option>bird</option>
+      <option>mandrill</option>
+      <option>car</option>
+      <option>omf</option>
+      <option>steam</option>
+      <option>steve</option>
+    </select>
+  </div>
+
+  <div id="left-controls">
+    <input type="range" min="10" max="100" step="10">
+    <select>
+      <option value="jpg">JPEG</option>
+      <option value="webp">WEBP</option>
+    </select>
+    <div class="info">
+      <div class="dpr-section">dpr: <span class="dpr"></span></div>
+      <div class="quality-section">quality: <span class="quality"></span></div>
+      <div class="size-section">size: <span class="size"></span></div>
+      <div class="format-section">format: <span class="format"></span></div>
+    </div>
+  </div>
+
+  <div id="right-controls">
+    <input type="range" min="10" max="100" step="10">
+    <select>
+      <option value="jpg">JPEG</option>
+      <option value="webp">WEBP</option>
+    </select>
+    <div class="info">
+      <div class="dpr-section">dpr: <span class="dpr">2x</span></div>
+      <div class="quality-section">quality: <span class="quality">50</span></div>
+      <div class="size-section">size: <span class="size">150K</span></div>
+      <div class="format-section">format: <span class="format">JPEG</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/image-zoomer.js"></script>
+<script src="js/image-info.js"></script>
+<script>
+var base = 'plane';
+
+// Make two image zoomers, one for each canvas.
+var left = new ImageZoomer('canvas#left', 'images/plane/1x.jpg');
+var right = new ImageZoomer('canvas#right', 'images/plane/2x.jpg');
+
+// Link the zoom levels of the two zoomers.
+left.onZoomChanged(right.doZoom.bind(right));
+right.onZoomChanged(left.doZoom.bind(left));
+
+// Make a left and right metadata picker.
+var leftInfo = new ImageInfo('#left-controls', left,
+    {base: base, dpr: 1});
+var rightInfo = new ImageInfo('#right-controls', right,
+    {base: base, dpr: 2});
+
+// Listen to changes in the base.
+var basePicker = document.querySelector('#base-image');
+basePicker.addEventListener('change', function(e) {
+  var newBase = e.target.value;
+  rightInfo.setBaseImage(newBase);
+  leftInfo.setBaseImage(newBase);
+});
+</script>
